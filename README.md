@@ -1,2 +1,2 @@
 # happybrowser
-happybrowser is a text-based command line browser that uses sentiment analysis to determine whether a page is "happy" enough to be displayed to the user.
+happybrowser is a simple text-based command line browser that uses sentiment analysis to determine whether a user-requested web page is "happy" enough to be displayed. Sometimes, we just want good news.
