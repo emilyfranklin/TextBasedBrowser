@@ -3,14 +3,14 @@ import os
 from os import path
 import requests
 from bs4 import BeautifulSoup
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
 args = sys.argv
 dir_name = args[1]
+stack = []
 
 if not path.exists(dir_name):
     os.makedirs(dir_name)
-
-stack = []
 
 
 def is_valid(url):
@@ -39,6 +39,8 @@ def make_file_name(url):
 def make_full_url(url):
     if "https://" not in url:
         return "https://" + url
+    else:
+        return url
 
 
 def parse_html(text):
@@ -50,7 +52,7 @@ def parse_html(text):
 
 
 while True:
-    url = input()
+    url = input("Enter a URL, type 'back' to go back, or type 'exit' to quit: ")
     file_name = make_file_name(url)
     full_url = make_full_url(url)
     if url == "back":
@@ -67,8 +69,15 @@ while True:
     elif is_valid(url):
         r = requests.get(full_url)
         parsed = parse_html(r.text)
-        save_to_file(parsed, file_name)
-        stack.append(parsed)
-        print(parsed)
+        vader = SentimentIntensityAnalyzer()
+        sentiment = vader.polarity_scores(parsed)['compound']
+        if sentiment >= 0:
+            print("The following has a compound sentiment score of " + str(sentiment) + "!")
+            save_to_file(parsed, file_name)
+            stack.append(parsed)
+            print(parsed)
+        else:
+            print("To preserve your happiness, we've decided not to display the results.")
     else:
         print("Error: Invalid URL")
+
